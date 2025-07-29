@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Debug File Upload</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; text-align: center; }
+    input, button { padding: 10px; margin: 5px; }
+    #message { margin-top: 15px; font-weight: bold; }
+    #log { margin-top: 20px; font-size: 12px; text-align: left; background: #f7f7f7; padding: 10px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <h2>📎 Debug File Upload</h2>
+
+  <form id="uploadForm">
+    <input type="file" name="file" required>
+    <button type="submit">Upload File</button>
+  </form>
+
+  <div id="message"></div>
+  <pre id="log"></pre>
+
+  <script>
+    const logBox = document.getElementById("log");
+    const msg = document.getElementById("message");
+
+    function log(text) {
+      logBox.textContent += text + "\n";
+    }
+
+    document.getElementById("uploadForm").onsubmit = async function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      
+      msg.innerHTML = "⏳ Uploading...";
+      log("Form submitted. Sending request...");
+
+      try {
+        const res = await fetch("https://script.google.com/macros/s/AKfycbwLrEr2UeMd5ikn7JhNDU_mN31JYNOPh-sR1laoC2IlGfzv3i7o4DhabE0hSr06-ujOwQ/exec", {
+          method: "POST",
+          body: formData
+        });
+
+        log("Response status: " + res.status);
+
+        const text = await res.text();
+        log("Response text: " + text);
+        msg.innerHTML = text;
+      } catch (err) {
+        log("Error: " + err.message);
+        msg.innerHTML = "❌ Upload failed: " + err.message;
+      }
+    };
+  </script>
+</body>
+</html>
