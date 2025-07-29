@@ -1,196 +1,188 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Request for Quotation</title>
-    
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    
-    <style>
-        /* --- General & Body Styles --- */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f7f9;
-            margin: 0;
-            padding: 2rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        /* --- Form Container --- */
-        .form-container {
-            background-color: #ffffff;
-            padding: 2.5rem;
-            border-radius: 12px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-            width: 100%;
-            max-width: 700px;
-        }
-
-        .form-container h1 {
-            color: #1a202c;
-            margin-bottom: 1.5rem;
-            font-size: 1.75rem;
-            text-align: center;
-        }
-
-        /* --- Form Fields & Layout --- */
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: #4a5568;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="tel"],
-        input[type="number"],
-        select,
-        input[type="file"] {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 1rem;
-            color: #2d3748;
-            transition: box-shadow 0.2s, border-color 0.2s;
-            box-sizing: border-box; /* Important for padding */
-        }
-        
-        input[type="file"] {
-            padding: 0.6rem 1rem;
-        }
-
-        input:focus,
-        select:focus {
-            outline: none;
-            border-color: #4299e1;
-            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
-        }
-
-        /* --- Specific Field Groups --- */
-        .phone-group {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .phone-group select {
-            flex: 0 0 120px; /* Country code width */
-        }
-
-        .phone-group input {
-            flex: 1;
-        }
-
-        /* --- Dynamic Product Rows --- */
-        #products-container .product-row {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .product-row input[type="text"] { flex: 3; }
-        .product-row input[type="number"] { flex: 1; }
-        .product-row .remove-btn { flex: 0 0 auto; }
-
-        /* --- Buttons --- */
-        .remove-btn,
-        #add-product-btn,
-        button[type="submit"] {
-            border: none;
-            border-radius: 8px;
-            padding: 0.8rem 1rem;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
-        }
-        
-        .remove-btn {
-            background-color: transparent;
-            color: #e53e3e;
-            font-size: 1.5rem;
-            padding: 0 0.5rem;
-        }
-        .remove-btn:disabled {
-            color: #cbd5e0;
-            cursor: not-allowed;
-        }
-        .remove-btn:hover:not(:disabled) {
-            transform: scale(1.1);
-        }
-        
-        #add-product-btn {
-            background-color: #edf2f7;
-            color: #4a5568;
-            display: block;
-            width: 100%;
-            margin-top: 0.5rem;
-            border: 1px dashed #cbd5e0;
-        }
-        #add-product-btn:hover {
-            background-color: #e2e8f0;
-        }
-        
-        button[type="submit"] {
-            width: 100%;
-            background-color: #3182ce;
-            color: white;
-            margin-top: 1.5rem;
-        }
-        button[type="submit"]:hover {
-            background-color: #2b6cb0;
-        }
-        
-        /* --- Status Messages --- */
-        #status-message {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            border-radius: 8px;
-            text-align: center;
-            font-weight: 600;
-            display: none; /* Hidden by default */
-        }
-        #status-message.success {
-            background-color: #c6f6d5;
-            color: #2f855a;
-            display: block;
-        }
-        #status-message.error {
-            background-color: #fed7d7;
-            color: #c53030;
-            display: block;
-        }
-        
-        /* --- Responsive Adjustments --- */
-        @media (max-width: 600px) {
-            body { padding: 1rem; }
-            .form-container { padding: 1.5rem; }
-            .product-row { flex-wrap: wrap; }
-            .product-row input { width: 100%; }
-            .product-row input[type="text"] { margin-bottom: 0.5rem; }
-            .product-row .remove-btn { margin-left: auto; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>طلب عرض سعر</title>
+  <style>
+    body {
+      font-family: 'Cairo', 'Tajawal', sans-serif;
+      background-color: #f4f7f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+      direction: rtl;
+    }
+    form {
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    input, button, select {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    input[type="file"] {
+      padding: 3px;
+    }
+    .phone-row {
+      display: flex;
+      gap: 10px;
+    }
+    .phone-row select {
+      width: 120px;
+    }
+    .product-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .product-row input {
+      flex: 1;
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
+    .product-row button {
+      width: 40px;
+      background: #ff4d4d;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+    #addProduct {
+      background: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    #message {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+    #message.success { color: green; }
+    #message.error { color: red; }
+  </style>
 </head>
 <body>
 
-    <div class="form-container">
-        <h1>Request a Quotation</h1>
-        <form id="rfq-form" enctype="multipart/form-data">
-            
-            <input type="hidden" name="products_table">
-            <input type="hidden" name="phone">
+<form id="rfqForm" enctype="multipart/form-data">
+  <h2>طلب عرض سعر</h2>
+  
+  <input type="text" name="full_name" placeholder="الاسم الكامل" required>
+  <input type="text" name="company_name" placeholder="اسم الشركة (اختياري)">
+  <input type="email" name="email" placeholder="البريد الإلكتروني" required pattern="^[^ ]+@[^ ]+\.com$">
 
-            <div class="form-group">
-                <label for="full_name">Full Name</label>
-                <input type="text" id="full_name" name="full_name"
+  <div class="phone-row">
+    <select id="countryCode" name="country_code" required>
+      <option value="+20" selected>🇪🇬 +20</option>
+      <option value="+1">🇺🇸 +1</option>
+      <option value="+44">🇬🇧 +44</option>
+      <option value="+33">🇫🇷 +33</option>
+      <option value="+49">🇩🇪 +49</option>
+      <option value="+966">🇸🇦 +966</option>
+      <option value="+971">🇦🇪 +971</option>
+    </select>
+    <input type="tel" name="phone" placeholder="رقم الهاتف" required pattern="^\d{6,15}$">
+  </div>
+
+  <label>إرفاق ملف (اختياري)</label>
+  <input type="file" id="rfq_file" name="rfq_file" accept=".pdf,.doc,.docx,.png,.jpg">
+
+  <div id="products">
+    <div class="product-row">
+      <input type="text" name="product_name[]" placeholder="اسم المنتج" required>
+      <input type="number" name="product_quantity[]" placeholder="الكمية" required>
+      <button type="button" class="remove" style="display:none;">🗑️</button>
+    </div>
+  </div>
+
+  <button type="button" id="addProduct">➕ إضافة منتج</button>
+  <input type="hidden" name="products_table" id="products_table">
+
+  <button type="submit">إرسال الطلب</button>
+  <div id="message"></div>
+</form>
+
+<!-- EmailJS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+  emailjs.init("S8j3LoOQfZofPv41a"); // Public Key
+
+  document.addEventListener("DOMContentLoaded", function() {
+    // Add product row
+    document.getElementById("addProduct").addEventListener("click", function() {
+      const container = document.getElementById("products");
+      const row = document.createElement("div");
+      row.className = "product-row";
+      row.innerHTML = `
+        <input type="text" name="product_name[]" placeholder="اسم المنتج" required>
+        <input type="number" name="product_quantity[]" placeholder="الكمية" required>
+        <button type="button" class="remove">🗑️</button>
+      `;
+      container.appendChild(row);
+      row.querySelector(".remove").addEventListener("click", function() {
+        row.remove();
+      });
+    });
+
+    // Form submission
+    document.getElementById("rfqForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const form = this;
+      const msg = document.getElementById("message");
+
+      // Combine country code and phone
+      const code = document.getElementById("countryCode").value;
+      const phoneField = form.phone;
+      phoneField.value = code + phoneField.value;
+
+      // Generate products HTML table
+      const productNames = document.getElementsByName("product_name[]");
+      const productQtys = document.getElementsByName("product_quantity[]");
+      let table = "<table border='1' style='border-collapse:collapse;width:100%;text-align:center;'>";
+      table += "<tr><th>المنتج</th><th>الكمية</th></tr>";
+      for (let i = 0; i < productNames.length; i++) {
+        table += `<tr><td>${productNames[i].value}</td><td>${productQtys[i].value}</td></tr>`;
+      }
+      table += "</table>";
+      document.getElementById("products_table").value = table;
+
+      // Send via EmailJS
+      emailjs.sendForm("service_j69z5hb", "template_oogionp", form)
+        .then(() => {
+          msg.className = "success";
+          let countdown = 5;
+          msg.innerHTML = `✅ تم إرسال طلبك بنجاح! سيتم تحويلك خلال ${countdown} ثوانٍ...`;
+          const interval = setInterval(() => {
+            countdown--;
+            msg.innerHTML = `✅ تم إرسال طلبك بنجاح! سيتم تحويلك خلال ${countdown} ثوانٍ...`;
+            if (countdown === 0) {
+              clearInterval(interval);
+              window.location.href = "/";
+            }
+          }, 1000);
+        }, () => {
+          msg.className = "error";
+          msg.innerHTML = "❌ فشل الإرسال! حاول مرة أخرى أو أرسل مباشرة إلى: omaralalamiaa@gmail.com";
+        });
+    });
+  });
+</script>
+
+</body>
+</html>
