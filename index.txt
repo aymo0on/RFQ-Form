@@ -155,11 +155,22 @@
       table += "</table>";
       document.getElementById("products_table").value = table;
 
+      // Send form with EmailJS
       emailjs.sendForm("service_j69z5hb", "template_l6yk3pi", form)
         .then(function() {
           msg.className = "success";
-          msg.innerHTML = "✅ Your request has been sent! Redirecting in 5s...";
-          setTimeout(() => window.location.href = "https://alalamia-electric.wuiltstore.com/", 5000);
+
+          // Dynamic Countdown
+          let countdown = 5;
+          const interval = setInterval(() => {
+            msg.innerHTML = `✅ Your request has been sent! Redirecting in ${countdown}s...`;
+            countdown--;
+            if (countdown < 0) {
+              clearInterval(interval);
+              window.location.href = "https://alalamia-electric.wuiltstore.com/";
+            }
+          }, 1000);
+
         }, function() {
           msg.className = "error";
           msg.innerHTML = "❌ Submission failed! Please try again or contact: omaralalamiaa@gmail.com";
