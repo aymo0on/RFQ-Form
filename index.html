@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Request a Quotation</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f7f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+    }
+    form {
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    input, button, select {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    input[type="file"] {
+      padding: 3px;
+    }
+    .phone-row {
+      display: flex;
+      gap: 10px;
+    }
+    .phone-row select {
+      width: 120px;
+    }
+    .product-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .product-row input {
+      flex: 1;
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
+    .product-row button {
+      width: 40px;
+      background: #ff4d4d;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+    #addProduct {
+      background: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    #message {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+    #message.success { color: green; }
+    #message.error { color: red; }
+  </style>
+</head>
+<body>
+
+<form id="rfqForm">
+  <h2>Request a Quotation</h2>
+  
+  <input type="text" name="full_name" placeholder="Full Name" required>
+  <input type="text" name="company_name" placeholder="Your Company Name">
+  <input type="email" name="email" placeholder="Email (example@email.com)" required pattern="^[^ ]+@[^ ]+\.com$">
+
+  <div class="phone-row">
+    <select id="countryCode" name="country_code" required>
+      <option value="+20" selected>🇪🇬 +20</option>
+      <option value="+1">🇺🇸 +1</option>
+      <option value="+44">🇬🇧 +44</option>
+      <option value="+33">🇫🇷 +33</option>
+      <option value="+49">🇩🇪 +49</option>
+      <option value="+966">🇸🇦 +966</option>
+      <option value="+971">🇦🇪 +971</option>
+    </select>
+    <input type="tel" name="phone" placeholder="Phone Number" required pattern="^\d{6,15}$">
+  </div>
+
+  <label>Attach a File (optional)</label>
+  <input type="file" id="rfq_file" name="rfq_file" accept=".pdf,.doc,.docx,.png,.jpg">
+
+  <div id="products">
+    <div class="product-row">
+      <input type="text" name="product_name[]" placeholder="Product Name" required>
+      <input type="number" name="product_quantity[]" placeholder="Quantity" required>
+      <button type="button" class="remove" style="display:none;">🗑️</button>
+    </div>
+  </div>
+
+  <button type="button" id="addProduct" type="button">Add Product</button>
+  <input type="hidden" name="products_table" id="products_table">
+
+  <button type="submit">Submit Request</button>
+  <div id="message"></div>
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+  emailjs.init("-VGH4CrWNjCCvksl-"); // ضع مفتاحك العام من EmailJS هنا
+
+  document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("addProduct").addEventListener("click", function() {
+        const container = document.getElementById("products");
+        const row = document.createElement("div");
+        row.className = "product-row";
+        row.innerHTML = `
+            <input type="text" name="product_name[]" placeholder="Product Name" required>
+            <input type="number" name="product_quantity[]" placeholder="Quantity" required>
+            <button type="button" class="remove">🗑️</button>
+        `;
+        container.appendChild(row);
+
+        row.querySelector(".remove").addEventListener("click", function() {
+            row.remove();
+        });
+    });
+
+    document.getElementById("rfqForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const form = this;
+        const msg = document.getElementById("message");
+
+        const code = document.getElementById("countryCode").value;
+        const phoneField = form.phone;
+        phoneField.value = code + phoneField.value;
+
+        const productNames = document.getElementsByName("product_name[]");
+        const productQtys = document.getElementsByName("product_quantity[]");
+        let table = "<table border='1' style='border-collapse:collapse;width:100%;text-align:center;'>";
+        table += "<tr><th>Product</th><th>Quantity</th></tr>";
+        for (let i = 0; i < productNames.length; i++) {
+            table += `<tr><td>${productNames[i].value}</td><td>${productQtys[i].value}</td></tr>`;
+        }
+        table += "</table>";
+        document.getElementById("products_table").value = table;
+
+        emailjs.sendForm("service_j69z5hb", "template_o0jhwjh", form)
+          .then(function() {
+              msg.className = "success";
+              msg.innerHTML = "✅ Your request has been sent! Redirecting in 5s...";
+              setTimeout(() => window.location.href = "/", 5000);
+          }, function() {
+              msg.className = "error";
+              msg.innerHTML = "❌ Submission failed! Please try again or email: omaralalamiaa@gmail.com";
+          });
+    });
+  });
+</script>
+
+</body>
+</html>
