@@ -6,13 +6,12 @@
   <title>طلب عرض سعر</title>
   <style>
     body {
-      font-family: 'Cairo', 'Tajawal', sans-serif;
+      font-family: 'Cairo', Tahoma, sans-serif;
       background-color: #f4f7f6;
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 30px;
-      direction: rtl;
     }
     form {
       background: #fff;
@@ -80,12 +79,12 @@
 </head>
 <body>
 
-<form id="rfqForm" enctype="multipart/form-data">
+<form id="rfqForm">
   <h2>طلب عرض سعر</h2>
   
   <input type="text" name="full_name" placeholder="الاسم الكامل" required>
   <input type="text" name="company_name" placeholder="اسم الشركة (اختياري)">
-  <input type="email" name="email" placeholder="البريد الإلكتروني" required pattern="^[^ ]+@[^ ]+\.com$">
+  <input type="email" name="email" placeholder="البريد الإلكتروني" required pattern="^[^ ]+@[^ ]+\.[a-z]{2,3}$">
 
   <div class="phone-row">
     <select id="countryCode" name="country_code" required>
@@ -118,13 +117,12 @@
   <div id="message"></div>
 </form>
 
-<!-- EmailJS SDK -->
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
   emailjs.init("S8j3LoOQfZofPv41a"); // Public Key
 
   document.addEventListener("DOMContentLoaded", function() {
-    // Add product row
+    // إضافة وإزالة المنتجات ديناميكيًا
     document.getElementById("addProduct").addEventListener("click", function() {
       const container = document.getElementById("products");
       const row = document.createElement("div");
@@ -135,23 +133,24 @@
         <button type="button" class="remove">🗑️</button>
       `;
       container.appendChild(row);
+
       row.querySelector(".remove").addEventListener("click", function() {
         row.remove();
       });
     });
 
-    // Form submission
+    // إرسال النموذج
     document.getElementById("rfqForm").addEventListener("submit", function(e) {
       e.preventDefault();
       const form = this;
       const msg = document.getElementById("message");
 
-      // Combine country code and phone
+      // دمج كود الدولة مع رقم الهاتف
       const code = document.getElementById("countryCode").value;
       const phoneField = form.phone;
       phoneField.value = code + phoneField.value;
 
-      // Generate products HTML table
+      // إنشاء جدول HTML للمنتجات
       const productNames = document.getElementsByName("product_name[]");
       const productQtys = document.getElementsByName("product_quantity[]");
       let table = "<table border='1' style='border-collapse:collapse;width:100%;text-align:center;'>";
@@ -162,23 +161,23 @@
       table += "</table>";
       document.getElementById("products_table").value = table;
 
-      // Send via EmailJS
       emailjs.sendForm("service_j69z5hb", "template_oogionp", form)
-        .then(() => {
+        .then(function() {
           msg.className = "success";
-          let countdown = 5;
-          msg.innerHTML = `✅ تم إرسال طلبك بنجاح! سيتم تحويلك خلال ${countdown} ثوانٍ...`;
+          let counter = 5;
+          msg.innerHTML = `✅ تم إرسال طلبك بنجاح! سيتم تحويلك خلال ${counter} ثوانٍ...`;
+
           const interval = setInterval(() => {
-            countdown--;
-            msg.innerHTML = `✅ تم إرسال طلبك بنجاح! سيتم تحويلك خلال ${countdown} ثوانٍ...`;
-            if (countdown === 0) {
+            counter--;
+            msg.innerHTML = `✅ تم إرسال طلبك بنجاح! سيتم تحويلك خلال ${counter} ثوانٍ...`;
+            if (counter === 0) {
               clearInterval(interval);
-              window.location.href = "/";
+              window.location.href = "https://alalamia-electric.wuiltstore.com/";
             }
           }, 1000);
-        }, () => {
+        }, function() {
           msg.className = "error";
-          msg.innerHTML = "❌ فشل الإرسال! حاول مرة أخرى أو أرسل مباشرة إلى: omaralalamiaa@gmail.com";
+          msg.innerHTML = "❌ فشل الإرسال! يرجى المحاولة مرة أخرى أو التواصل عبر: omaralalamiaa@gmail.com";
         });
     });
   });
