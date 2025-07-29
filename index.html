@@ -33,6 +33,9 @@
       border-radius: 6px;
       border: 1px solid #ccc;
     }
+    input[type="file"] {
+      padding: 3px;
+    }
     .phone-row {
       display: flex;
       gap: 10px;
@@ -94,6 +97,9 @@
     <input type="tel" name="phone" placeholder="Phone Number" required pattern="^\d{6,15}$">
   </div>
 
+  <label>Attach a File (optional)</label>
+  <input type="file" name="rfq_file" id="rfq_file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+
   <div id="products">
     <div class="product-row">
       <input type="text" name="product_name[]" placeholder="Product Name" required>
@@ -103,7 +109,6 @@
   </div>
 
   <button type="button" id="addProduct">Add Product</button>
-
   <button type="submit">Submit Request</button>
   <div id="message"></div>
 </form>
@@ -111,11 +116,10 @@
 <!-- EmailJS SDK -->
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
-  // استخدام المفتاح العام الجديد
   emailjs.init("S8j3LoOQfZofPv41a");
 
   document.addEventListener("DOMContentLoaded", function() {
-    // Dynamic add/remove products
+    // Add new product rows dynamically
     document.getElementById("addProduct").addEventListener("click", function() {
         const container = document.getElementById("products");
         const row = document.createElement("div");
@@ -140,8 +144,7 @@
 
         // Combine country code and phone
         const code = document.getElementById("countryCode").value;
-        const phoneField = form.phone;
-        phoneField.value = code + phoneField.value;
+        form.phone.value = code + form.phone.value;
 
         // Generate products HTML table
         const productNames = document.getElementsByName("product_name[]");
@@ -153,21 +156,30 @@
         }
         table += "</table>";
 
-        // Prepare data for EmailJS
+        // Prepare EmailJS template params
         const templateParams = {
           full_name: form.full_name.value,
           company_name: form.company_name.value || "N/A",
           email: form.email.value,
           phone: form.phone.value,
-          products_table: table
+          products_table: table,
+          rfq_file: form.rfq_file.files.length ? form.rfq_file.files[0].name : "No file attached"
         };
 
-        // Send using EmailJS
+        // Send the email
         emailjs.send("service_j69z5hb", "template_l6yk3pi", templateParams)
           .then(() => {
+              let countdown = 5;
               msg.className = "success";
-              msg.innerHTML = "✅ Your request has been sent! Redirecting in 5s...";
-              setTimeout(() => window.location.href = "/", 5000);
+              msg.innerHTML = `✅ Your request has been sent! Redirecting in ${countdown}s...`;
+              const interval = setInterval(() => {
+                countdown--;
+                msg.innerHTML = `✅ Your request has been sent! Redirecting in ${countdown}s...`;
+                if (countdown === 0) {
+                  clearInterval(interval);
+                  window.location.href = "https://aymo0on.github.io/RFQ-Form/";
+                }
+              }, 1000);
           }, (error) => {
               console.error("EmailJS error:", error);
               msg.className = "error";
