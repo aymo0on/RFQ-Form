@@ -5,71 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Request a Quotation</title>
   <style>
+    /* ✅ تعديل 1: إزالة المساحة البيضاء الكبيرة */
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
       background-color: #f4f7f6;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 30px;
+      margin: 0;
+      padding: 30px 0;
     }
     form {
       background: #fff;
       padding: 25px;
       border-radius: 12px;
-      width: 100%;
+      width: 90%;
       max-width: 600px;
+      margin: auto;
       box-shadow: 0 0 15px rgba(0,0,0,0.1);
     }
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #333;
-    }
-    input, button, select {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-    .phone-row {
-      display: flex;
-      gap: 10px;
-    }
-    .phone-row select {
-      width: 120px;
-    }
-    .product-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    .product-row input {
-      flex: 1;
-      border: 1px solid #ccc;
-      padding: 8px;
-    }
-    .product-row button {
-      width: 40px;
-      background: #ff4d4d;
-      color: white;
-      border: none;
-      cursor: pointer;
-      border-radius: 6px;
-    }
-    #addProduct {
-      background: #007BFF;
-      color: white;
-      border: none;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    #message {
-      margin-top: 15px;
-      text-align: center;
-      font-weight: bold;
-    }
+    h2 { text-align: center; margin-bottom: 20px; color: #333; }
+    input, button, select { width: 100%; padding: 10px; margin: 8px 0; border-radius: 6px; border: 1px solid #ccc; }
+    .phone-row { display: flex; gap: 10px; }
+    .phone-row select { width: 120px; }
+    .product-row { display: flex; gap: 10px; margin-bottom: 10px; }
+    .product-row input { flex: 1; border: 1px solid #ccc; padding: 8px; }
+    .product-row button { width: 40px; background: #ff4d4d; color: white; border: none; cursor: pointer; border-radius: 6px; }
+    #addProduct { background: #007BFF; color: white; border: none; cursor: pointer; margin-top: 10px; }
+    #message { margin-top: 15px; text-align: center; font-weight: bold; }
     #message.success { color: green; }
     #message.error { color: red; }
   </style>
@@ -78,10 +38,10 @@
 
 <form id="rfqForm">
   <h2>Request a Quotation</h2>
-  
+
   <input type="text" name="full_name" placeholder="Full Name" required>
-  <input type="text" name="company_name" placeholder="Your Company Name (Optional)">
-  <input type="email" name="email" placeholder="Email" required pattern="^[^ ]+@[^ ]+\.[a-z]{2,3}$">
+  <input type="text" name="company_name" placeholder="Your Company Name"> <!-- optional -->
+  <input type="email" name="email" placeholder="Email (example@email.com)" required pattern="^[^ ]+@[^ ]+\.com$">
 
   <div class="phone-row">
     <select id="countryCode" name="country_code" required>
@@ -104,19 +64,20 @@
     </div>
   </div>
 
-  <button type="button" id="addProduct">➕ Add Product</button>
+  <button type="button" id="addProduct">Add Product</button>
   <input type="hidden" name="products_table" id="products_table">
 
   <button type="submit">Submit Request</button>
   <div id="message"></div>
 </form>
 
+<!-- EmailJS SDK -->
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
-  emailjs.init("S8j3LoOQfZofPv41a"); // Your Public Key
+  emailjs.init("S8j3LoOQfZofPv41a"); // Public Key
 
   document.addEventListener("DOMContentLoaded", function() {
-    // Dynamic add/remove products
+    // Add/remove products dynamically
     document.getElementById("addProduct").addEventListener("click", function() {
       const container = document.getElementById("products");
       const row = document.createElement("div");
@@ -133,18 +94,16 @@
       });
     });
 
-    // Handle form submission
+    // Submit form
     document.getElementById("rfqForm").addEventListener("submit", function(e) {
       e.preventDefault();
       const form = this;
       const msg = document.getElementById("message");
 
-      // Combine country code and phone
-      const code = document.getElementById("countryCode").value;
-      const phoneField = form.phone;
-      phoneField.value = code + phoneField.value;
+      // Merge phone code
+      form.phone.value = document.getElementById("countryCode").value + form.phone.value;
 
-      // Generate products HTML table
+      // ✅ تعديل 2: إنشاء الجدول ليتوافق مع EmailJS HTML
       const productNames = document.getElementsByName("product_name[]");
       const productQtys = document.getElementsByName("product_quantity[]");
       let table = "<table border='1' style='border-collapse:collapse;width:100%;text-align:center;'>";
@@ -155,22 +114,20 @@
       table += "</table>";
       document.getElementById("products_table").value = table;
 
-      // Send form with EmailJS
       emailjs.sendForm("service_j69z5hb", "template_l6yk3pi", form)
         .then(function() {
           msg.className = "success";
-
-          // Dynamic Countdown
           let countdown = 5;
+          msg.innerHTML = `✅ Your request has been sent! Redirecting in ${countdown}s...`;
           const interval = setInterval(() => {
-            msg.innerHTML = `✅ Your request has been sent! Redirecting in ${countdown}s...`;
             countdown--;
-            if (countdown < 0) {
+            msg.innerHTML = `✅ Your request has been sent! Redirecting in ${countdown}s...`;
+            if (countdown === 0) {
               clearInterval(interval);
-              window.location.href = "https://alalamia-electric.wuiltstore.com/";
+              /* ✅ تعديل 3: التوجيه الكامل خارج iframe */
+              window.top.location.href = "https://alalamia-electric.wuiltstore.com/en";
             }
           }, 1000);
-
         }, function() {
           msg.className = "error";
           msg.innerHTML = "❌ Submission failed! Please try again or contact: omaralalamiaa@gmail.com";
