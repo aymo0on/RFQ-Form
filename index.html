@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Request a Quotation</title>
   <style>
+    /* ✅ FIX 2: Universal box-sizing for correct margins */
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: 'Segoe UI', Tahoma, sans-serif;
       background-color: #f4f7f6;
@@ -43,7 +48,18 @@
     .phone-row { display: flex; gap: 10px; }
     .phone-row select { width: 120px; }
     .product-row { display: flex; align-items: center; gap: 10px; }
-    .product-row input { flex: 1; margin-bottom: 10px; }
+    
+    /* ✅ FIX 3: Adjusting Product Name and Quantity field widths */
+    .product-row input[type="text"] {
+      flex: 3; /* Makes the product name field much wider */
+      margin-bottom: 10px;
+    }
+    .product-row input[type="number"] {
+      flex: 1; /* Makes the quantity field smaller */
+      margin-bottom: 10px;
+      min-width: 90px;
+    }
+    
     button[type="submit"], #addProduct {
       background: #2772b7;
       color: white;
@@ -67,9 +83,7 @@
       border: 1px solid #ccc;
       margin-bottom: 10px;
       line-height: 40px;
-    }
-    .product-row button.remove:hover {
-      background: #d1d1d1;
+      flex-shrink: 0; /* Prevents the button from shrinking */
     }
     #message { margin-top: 15px; text-align: center; font-weight: bold; font-size: 16px; }
     #message.success { color: green; }
@@ -116,6 +130,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
+    // The JavaScript does not need to be changed for these fixes.
+    // It is the same as our last working version.
     emailjs.init("S8j3LoOQfZofPv41a");
     function sendHeight() {
       setTimeout(() => {
@@ -156,7 +172,6 @@
         document.getElementById("products_table").value = table;
         emailjs.sendForm("service_j69z5hb", "template_l6yk3pi", form)
           .then(function() {
-            // ✅ THE FINAL BUG FIX IS HERE: 'let countdown' is now declared BEFORE it is used.
             let countdown = 5;
             msg.className = "success";
             msg.innerHTML = `✅ Your request has been sent! Redirecting in ${countdown}s...`;
