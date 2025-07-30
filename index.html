@@ -134,9 +134,11 @@
     <div id="message"></div>
   </form>
 
-  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
-    // This script remains the same as before, sending height on load, add, and remove
+    emailjs.init("S8j3LoOQfZofPv41a"); // Public Key
+
+    // This function sends the form's height to the parent page (Wuilt)
     function sendHeight() {
       setTimeout(() => {
         const height = document.body.scrollHeight;
@@ -145,11 +147,9 @@
     }
     
     document.addEventListener("DOMContentLoaded", function() {
-      emailjs.init("S8j3LoOQfZofPv41a"); // Public Key
       sendHeight();
 
       document.getElementById("addProduct").addEventListener("click", function() {
-        // ... (add product logic remains the same)
         const container = document.getElementById("products");
         const row = document.createElement("div");
         row.className = "product-row";
@@ -172,11 +172,9 @@
         const msg = document.getElementById("message");
         const submitButton = form.querySelector("button[type='submit']");
         
-        // ✅ Disable button and show processing message
         submitButton.disabled = true;
         submitButton.innerText = "Submitting...";
 
-        // (The rest of the submission logic is the same)
         form.phone.value = document.getElementById("countryCode").value + form.phone.value;
         const productNames = document.getElementsByName("product_name[]");
         const productQtys = document.getElementsByName("product_quantity[]");
@@ -191,8 +189,9 @@
         emailjs.sendForm("service_j69z5hb", "template_l6yk3pi", form)
           .then(function() {
             msg.className = "success";
-            let countdown = 5;
             msg.innerHTML = `✅ Your request has been sent! Redirecting in ${countdown}s...`;
+            sendHeight(); // ✅ FIX 1: Resize the iframe to show the success message
+            let countdown = 5;
             const interval = setInterval(() => {
               countdown--;
               msg.innerHTML = `✅ Your request has been sent! Redirecting in ${countdown}s...`;
@@ -204,7 +203,7 @@
           }, function() {
             msg.className = "error";
             msg.innerHTML = "❌ Submission failed! Please try again or contact: omaralalamiaa@gmail.com";
-            // ✅ Re-enable button on failure
+            sendHeight(); // ✅ FIX 2: Resize the iframe to show the error message
             submitButton.disabled = false;
             submitButton.innerText = "Submit Request";
           });
