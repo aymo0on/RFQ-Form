@@ -6,176 +6,174 @@
   <title>طلب عرض سعر</title>
   <style>
     body {
-      font-family: 'Cairo', Tahoma, sans-serif;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
       background-color: #f4f7f6;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 30px;
+      margin: 0;
     }
     form {
       background: #fff;
-      padding: 25px;
+      padding: 30px;
       border-radius: 12px;
-      width: 100%;
+      width: 90%;
       max-width: 600px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      margin: 40px auto;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      direction: rtl;
+      text-align: right;
     }
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #333;
-    }
-    input, button, select {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-    .phone-row {
-      display: flex;
-      gap: 10px;
-    }
-    .phone-row select {
-      width: 120px;
-    }
-    .product-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    .product-row input {
-      flex: 1;
-      border: 1px solid #ccc;
-      padding: 8px;
-    }
-    .product-row button {
-      width: 40px;
-      background: #ff4d4d;
-      color: white;
-      border: none;
-      cursor: pointer;
-      border-radius: 6px;
-    }
-    #addProduct {
-      background: #007BFF;
-      color: white;
-      border: none;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    #message {
-      margin-top: 15px;
-      text-align: center;
+    h2 { text-align: center; margin-bottom: 25px; color: #333; }
+    label {
+      display: block;
+      margin-bottom: 5px;
       font-weight: bold;
+      color: #555;
+      font-size: 14px;
     }
+    input, button, select, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #2772b7;
+      box-shadow: 0 0 5px rgba(39, 114, 183, 0.5);
+    }
+    .phone-row { display: flex; gap: 10px; flex-direction: row-reverse; }
+    .phone-row select { width: 120px; }
+    .product-row { display: flex; align-items: center; gap: 10px; flex-direction: row-reverse; }
+    .product-row input { flex: 1; margin-bottom: 10px; }
+    button[type="submit"], #addProductAr {
+      background: #2772b7;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button[type="submit"]:hover, #addProductAr:hover {
+      background-color: #1e5a90;
+    }
+    button[type="submit"]:disabled {
+      background-color: #a0a0a0;
+      cursor: wait;
+    }
+    .product-row button.remove {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      background: #e0e0e0;
+      color: #333;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+      line-height: 40px;
+    }
+    #message { margin-top: 15px; text-align: center; font-weight: bold; font-size: 16px; }
     #message.success { color: green; }
     #message.error { color: red; }
   </style>
 </head>
 <body>
-
-<form id="rfqForm">
-  <h2>طلب عرض سعر</h2>
-  
-  <input type="text" name="full_name" placeholder="الاسم الكامل" required>
-  <input type="text" name="company_name" placeholder="اسم الشركة (اختياري)">
-  <input type="email" name="email" placeholder="البريد الإلكتروني" required pattern="^[^ ]+@[^ ]+\.[a-z]{2,3}$">
-
-  <div class="phone-row">
-    <select id="countryCode" name="country_code" required>
-      <option value="+20" selected>🇪🇬 +20</option>
-      <option value="+1">🇺🇸 +1</option>
-      <option value="+44">🇬🇧 +44</option>
-      <option value="+33">🇫🇷 +33</option>
-      <option value="+49">🇩🇪 +49</option>
-      <option value="+966">🇸🇦 +966</option>
-      <option value="+971">🇦🇪 +971</option>
-    </select>
-    <input type="tel" name="phone" placeholder="رقم الهاتف" required pattern="^\d{6,15}$">
-  </div>
-
-  <div id="products">
-    <div class="product-row">
-      <input type="text" name="product_name[]" placeholder="اسم المنتج" required>
-      <input type="number" name="product_quantity[]" placeholder="الكمية" required>
-      <button type="button" class="remove" style="display:none;">🗑️</button>
+  <form id="rfqFormAr">
+    <h2>طلب عرض سعر</h2>
+    <label for="full_name_ar">الاسم الكامل</label>
+    <input type="text" id="full_name_ar" name="full_name" placeholder="ادخل الاسم الكامل" required>
+    <label for="company_name_ar">اسم الشركة (اختياري)</label>
+    <input type="text" id="company_name_ar" name="company_name" placeholder="اسم شركتك">
+    <label for="email_ar">البريد الإلكتروني</label>
+    <input type="email" id="email_ar" name="email" placeholder="example@email.com" required pattern="^[^ ]+@[^ ]+\.[^ ]+$">
+    <label for="countryCodeAr">رقم الهاتف</label>
+    <div class="phone-row">
+      <select id="countryCodeAr" name="country_code" required>
+        <option value="+20" selected>🇪🇬 +20</option>
+        <option value="+966">🇸🇦 +966</option>
+        <option value="+971">🇦🇪 +971</option>
+        <option value="+1">🇺🇸 +1</option>
+        <option value="+44">🇬🇧 +44</option>
+      </select>
+      <input type="tel" id="phone_ar" name="phone" placeholder="رقم الهاتف" required pattern="^\d{6,15}$">
     </div>
-  </div>
-
-  <button type="button" id="addProduct">➕ إضافة منتج</button>
-  <input type="hidden" name="products_table" id="products_table">
-
-  <button type="submit">إرسال الطلب</button>
-  <div id="message"></div>
-</form>
-
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-<script>
-  emailjs.init("S8j3LoOQfZofPv41a"); // Public Key
-
-  document.addEventListener("DOMContentLoaded", function() {
-    // إضافة وإزالة المنتجات ديناميكيًا
-    document.getElementById("addProduct").addEventListener("click", function() {
-      const container = document.getElementById("products");
-      const row = document.createElement("div");
-      row.className = "product-row";
-      row.innerHTML = `
+    <label>المنتجات</label>
+    <div id="productsAr">
+      <div class="product-row">
         <input type="text" name="product_name[]" placeholder="اسم المنتج" required>
         <input type="number" name="product_quantity[]" placeholder="الكمية" required>
-        <button type="button" class="remove">🗑️</button>
-      `;
-      container.appendChild(row);
+        <button type="button" class="remove" style="display:none;">🗑️</button>
+      </div>
+    </div>
+    <button type="button" id="addProductAr">إضافة منتج آخر</button>
+    <label for="message_notes_ar">ملاحظات إضافية أو رسالة</label>
+    <textarea id="message_notes_ar" name="message_notes" rows="4" placeholder="مثال: متطلبات خاصة، تعليمات التوصيل..."></textarea>
+    <input type="hidden" name="products_table" id="products_tableAr">
+    <button type="submit">إرسال الطلب</button>
+    <div id="message"></div>
+  </form>
 
-      row.querySelector(".remove").addEventListener("click", function() {
-        row.remove();
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    emailjs.init("S8j3LoOQfZofPv41a");
+    function sendHeight() { /* This function is the same, no changes needed */
+      setTimeout(() => {
+        const height = document.body.scrollHeight;
+        window.parent.postMessage({ frameHeight: height }, '*');
+      }, 100);
+    }
+    document.addEventListener("DOMContentLoaded", function() {
+      sendHeight();
+      document.getElementById("addProductAr").addEventListener("click", function() {
+        const container = document.getElementById("productsAr");
+        const row = document.createElement("div");
+        row.className = "product-row";
+        row.innerHTML = `<input type="text" name="product_name[]" placeholder="اسم المنتج" required><input type="number" name="product_quantity[]" placeholder="الكمية" required><button type="button" class="remove">🗑️</button>`;
+        container.appendChild(row);
+        row.querySelector(".remove").addEventListener("click", function() {
+          row.remove();
+          sendHeight();
+        });
+        sendHeight();
+      });
+      document.getElementById("rfqFormAr").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const form = this;
+        const msg = document.getElementById("message");
+        const submitButton = form.querySelector("button[type='submit']");
+        submitButton.disabled = true;
+        submitButton.innerText = "جارٍ الإرسال...";
+        form.phone.value = document.getElementById("countryCodeAr").value + form.phone.value;
+        const productNames = document.getElementsByName("product_name[]");
+        const productQtys = document.getElementsByName("product_quantity[]");
+        let table = "<table border='1' style='border-collapse:collapse;width:100%;text-align:center;'>";
+        table += "<tr><th>المنتج</th><th>الكمية</th></tr>";
+        for (let i = 0; i < productNames.length; i++) {
+          table += `<tr><td>${productNames[i].value}</td><td>${productQtys[i].value}</td></tr>`;
+        }
+        table += "</table>";
+        document.getElementById("products_tableAr").value = table;
+        emailjs.sendForm("service_j69z5hb", "template_oogionp", form)
+          .then(function() {
+            let countdown = 5;
+            msg.className = "success";
+            msg.innerHTML = `✅ تم إرسال طلبك! سيتم التحويل خلال ${countdown} ثواني...`;
+            sendHeight();
+            const interval = setInterval(() => {
+              countdown--;
+              msg.innerHTML = `✅ تم إرسال طلبك! سيتم التحويل خلال ${countdown} ثواني...`;
+              if (countdown === 0) {
+                clearInterval(interval);
+                window.top.location.href = "https://alalamia-electric.wuiltstore.com/ar";
+              }
+            }, 1000);
+          }, function() {
+            msg.className = "error";
+            msg.innerHTML = "❌ فشل الإرسال! يرجى المحاولة مرة أخرى أو التواصل معنا.";
+            sendHeight();
+            submitButton.disabled = false;
+            submitButton.innerText = "إرسال الطلب";
+          });
       });
     });
-
-    // إرسال النموذج
-    document.getElementById("rfqForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const form = this;
-      const msg = document.getElementById("message");
-
-      // دمج كود الدولة مع رقم الهاتف
-      const code = document.getElementById("countryCode").value;
-      const phoneField = form.phone;
-      phoneField.value = code + phoneField.value;
-
-      // إنشاء جدول HTML للمنتجات
-      const productNames = document.getElementsByName("product_name[]");
-      const productQtys = document.getElementsByName("product_quantity[]");
-      let table = "<table border='1' style='border-collapse:collapse;width:100%;text-align:center;'>";
-      table += "<tr><th>المنتج</th><th>الكمية</th></tr>";
-      for (let i = 0; i < productNames.length; i++) {
-        table += `<tr><td>${productNames[i].value}</td><td>${productQtys[i].value}</td></tr>`;
-      }
-      table += "</table>";
-      document.getElementById("products_table").value = table;
-
-      emailjs.sendForm("service_j69z5hb", "template_oogionp", form)
-        .then(function() {
-          msg.className = "success";
-          let counter = 5;
-          msg.innerHTML = `✅ تم إرسال طلبك بنجاح! سيتم تحويلك خلال ${counter} ثوانٍ...`;
-
-          const interval = setInterval(() => {
-            counter--;
-            msg.innerHTML = `✅ تم إرسال طلبك بنجاح! سيتم تحويلك خلال ${counter} ثوانٍ...`;
-            if (counter === 0) {
-              clearInterval(interval);
-              window.location.href = "https://alalamia-electric.wuiltstore.com/";
-            }
-          }, 1000);
-        }, function() {
-          msg.className = "error";
-          msg.innerHTML = "❌ فشل الإرسال! يرجى المحاولة مرة أخرى أو التواصل عبر: omaralalamiaa@gmail.com";
-        });
-    });
-  });
-</script>
-
+  </script>
 </body>
 </html>
