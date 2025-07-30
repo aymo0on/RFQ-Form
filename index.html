@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Request a Quotation</title>
   <style>
+    /* ✅ General Styling */
     body {
       font-family: 'Segoe UI', Tahoma, sans-serif;
       background-color: #f4f7f6;
@@ -12,21 +13,76 @@
     }
     form {
       background: #fff;
-      padding: 25px;
+      padding: 30px;
       border-radius: 12px;
       width: 90%;
       max-width: 600px;
       margin: 40px auto;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
     }
-    h2 { text-align: center; margin-bottom: 20px; color: #333; }
-    input, button, select { width: 100%; padding: 10px; margin: 8px 0; border-radius: 6px; border: 1px solid #ccc; }
+    h2 { text-align: center; margin-bottom: 25px; color: #333; }
+
+    /* ✅ Labels for Accessibility */
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #555;
+      font-size: 14px;
+    }
+
+    /* ✅ Input Fields & Buttons */
+    input, button, select, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px; /* Consistent spacing */
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    
+    /* ✅ Professional Focus Effect */
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #2772b7; /* Use a brand color */
+      box-shadow: 0 0 5px rgba(39, 114, 183, 0.5);
+    }
+
     .phone-row { display: flex; gap: 10px; }
     .phone-row select { width: 120px; }
-    .product-row { display: flex; gap: 10px; margin-bottom: 10px; }
-    .product-row input { flex: 1; border: 1px solid #ccc; padding: 8px; }
-    .product-row button { width: 40px; background: #ff4d4d; color: white; border: none; cursor: pointer; border-radius: 6px; }
-    #addProduct { background: #007BFF; color: white; border: none; cursor: pointer; margin-top: 10px; }
+    .product-row { display: flex; align-items: center; gap: 10px; }
+    .product-row input { flex: 1; margin-bottom: 10px; }
+    
+    /* ✅ Branded Buttons with Hover Effects */
+    button[type="submit"], #addProduct {
+      background: #2772b7; /* Your Site's Blue */
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button[type="submit"]:hover, #addProduct:hover {
+      background-color: #1e5a90; /* Darker Blue */
+    }
+    button[type="submit"]:disabled {
+      background-color: #a0a0a0;
+      cursor: wait;
+    }
+
+    .product-row button.remove {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      background: #e0e0e0;
+      color: #333;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+      line-height: 40px;
+    }
+    .product-row button.remove:hover {
+      background: #d1d1d1;
+    }
+
     #message { margin-top: 15px; text-align: center; font-weight: bold; }
     #message.success { color: green; }
     #message.error { color: red; }
@@ -36,10 +92,16 @@
   <form id="rfqForm">
     <h2>Request a Quotation</h2>
 
-    <input type="text" name="full_name" placeholder="Full Name" required>
-    <input type="text" name="company_name" placeholder="Your Company Name">
-    <input type="email" name="email" placeholder="Email (example@email.com)" required pattern="^[^ ]+@[^ ]+\.com$">
+    <label for="full_name">Full Name</label>
+    <input type="text" id="full_name" name="full_name" placeholder="Enter your full name" required>
 
+    <label for="company_name">Company Name (Optional)</label>
+    <input type="text" id="company_name" name="company_name" placeholder="Your company's name">
+
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" placeholder="example@email.com" required pattern="^[^ ]+@[^ ]+\.[^ ]+$">
+
+    <label for="countryCode">Phone Number</label>
     <div class="phone-row">
       <select id="countryCode" name="country_code" required>
         <option value="+20" selected>🇪🇬 +20</option>
@@ -50,9 +112,10 @@
         <option value="+966">🇸🇦 +966</option>
         <option value="+971">🇦🇪 +971</option>
       </select>
-      <input type="tel" name="phone" placeholder="Phone Number" required pattern="^\d{6,15}$">
+      <input type="tel" id="phone" name="phone" placeholder="Phone Number" required pattern="^\d{6,15}$">
     </div>
 
+    <label>Products</label>
     <div id="products">
       <div class="product-row">
         <input type="text" name="product_name[]" placeholder="Product Name" required>
@@ -60,8 +123,11 @@
         <button type="button" class="remove" style="display:none;">🗑️</button>
       </div>
     </div>
+    <button type="button" id="addProduct">Add Another Product</button>
 
-    <button type="button" id="addProduct">Add Product</button>
+    <label for="message_notes">Additional Notes or Message</label>
+    <textarea id="message_notes" name="message_notes" rows="4" placeholder="e.g., specific requirements, delivery instructions..."></textarea>
+
     <input type="hidden" name="products_table" id="products_table">
 
     <button type="submit">Submit Request</button>
@@ -70,23 +136,20 @@
 
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
-    emailjs.init("S8j3LoOQfZofPv41a"); // Public Key
-
-    // ✅ Function to send the form's height to the parent page (Wuilt)
+    // This script remains the same as before, sending height on load, add, and remove
     function sendHeight() {
       setTimeout(() => {
         const height = document.body.scrollHeight;
-        // The '*' means the message can be sent to any parent domain
         window.parent.postMessage({ frameHeight: height }, '*');
-      }, 100); // Small delay to ensure rendering is complete
+      }, 100);
     }
-
+    
     document.addEventListener("DOMContentLoaded", function() {
-      // Send initial height on page load
+      emailjs.init("S8j3LoOQfZofPv41a"); // Public Key
       sendHeight();
 
-      // Add/remove product rows dynamically
       document.getElementById("addProduct").addEventListener("click", function() {
+        // ... (add product logic remains the same)
         const container = document.getElementById("products");
         const row = document.createElement("div");
         row.className = "product-row";
@@ -96,25 +159,25 @@
           <button type="button" class="remove">🗑️</button>
         `;
         container.appendChild(row);
-
         row.querySelector(".remove").addEventListener("click", function() {
           row.remove();
-          sendHeight(); // Send height after removing a row
+          sendHeight();
         });
-        
-        sendHeight(); // Send height after adding a row
+        sendHeight();
       });
 
-      // Handle form submission
       document.getElementById("rfqForm").addEventListener("submit", function(e) {
         e.preventDefault();
         const form = this;
         const msg = document.getElementById("message");
+        const submitButton = form.querySelector("button[type='submit']");
+        
+        // ✅ Disable button and show processing message
+        submitButton.disabled = true;
+        submitButton.innerText = "Submitting...";
 
-        // Merge phone code
+        // (The rest of the submission logic is the same)
         form.phone.value = document.getElementById("countryCode").value + form.phone.value;
-
-        // Create products HTML table
         const productNames = document.getElementsByName("product_name[]");
         const productQtys = document.getElementsByName("product_quantity[]");
         let table = "<table border='1' style='border-collapse:collapse;width:100%;text-align:center;'>";
@@ -125,7 +188,6 @@
         table += "</table>";
         document.getElementById("products_table").value = table;
 
-        // Send via EmailJS
         emailjs.sendForm("service_j69z5hb", "template_l6yk3pi", form)
           .then(function() {
             msg.className = "success";
@@ -142,6 +204,9 @@
           }, function() {
             msg.className = "error";
             msg.innerHTML = "❌ Submission failed! Please try again or contact: omaralalamiaa@gmail.com";
+            // ✅ Re-enable button on failure
+            submitButton.disabled = false;
+            submitButton.innerText = "Submit Request";
           });
       });
     });
