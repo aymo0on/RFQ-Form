@@ -5,71 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>طلب عرض سعر</title>
   <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-      background-color: #f4f7f6;
-      margin: 0;
-    }
-    form {
-      background: #fff;
-      padding: 30px;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 600px;
-      margin: 40px auto;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
-      direction: rtl;
-      text-align: right;
-    }
+    * { box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f4f7f6; margin: 0; }
+    form { background: #fff; padding: 30px; border-radius: 12px; width: 90%; max-width: 600px; margin: 40px auto; box-shadow: 0 0 20px rgba(0,0,0,0.1); direction: rtl; text-align: right; }
     h2 { text-align: center; margin-bottom: 25px; color: #333; }
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-      color: #555;
-      font-size: 14px;
-    }
-    input, button, select, textarea {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 15px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: #2772b7;
-      box-shadow: 0 0 5px rgba(39, 114, 183, 0.5);
-    }
+    label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; font-size: 14px; }
+    input, button, select, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 6px; border: 1px solid #ccc; font-size: 16px; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: #2772b7; box-shadow: 0 0 5px rgba(39, 114, 183, 0.5); }
     .phone-row { display: flex; gap: 10px; flex-direction: row-reverse; }
     .phone-row select { width: 120px; }
     .product-row { display: flex; align-items: center; gap: 10px; flex-direction: row-reverse; }
-    .product-row input { flex: 1; margin-bottom: 10px; }
-    button[type="submit"], #addProductAr {
-      background: #2772b7;
-      color: white;
-      border: none;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    button[type="submit"]:hover, #addProductAr:hover {
-      background-color: #1e5a90;
-    }
-    button[type="submit"]:disabled {
-      background-color: #a0a0a0;
-      cursor: wait;
-    }
-    .product-row button.remove {
-      width: 40px;
-      height: 40px;
-      padding: 0;
-      background: #e0e0e0;
-      color: #333;
-      border: 1px solid #ccc;
-      margin-bottom: 10px;
-      line-height: 40px;
-    }
+    .product-row input[type="text"] { flex: 3; margin-bottom: 10px; }
+    .product-row input[type="number"] { flex: 1; margin-bottom: 10px; min-width: 90px; }
+    button[type="submit"], #addProductAr { background: #2772b7; color: white; border: none; cursor: pointer; transition: background-color 0.3s ease; }
+    button[type="submit"]:hover, #addProductAr:hover { background-color: #1e5a90; }
+    button[type="submit"]:disabled { background-color: #a0a0a0; cursor: wait; }
+    .product-row button.remove { width: 40px; height: 40px; padding: 0; background: #e0e0e0; color: #333; border: 1px solid #ccc; margin-bottom: 10px; line-height: 40px; flex-shrink: 0; }
     #message { margin-top: 15px; text-align: center; font-weight: bold; font-size: 16px; }
     #message.success { color: green; }
     #message.error { color: red; }
@@ -98,9 +49,9 @@
     <label>المنتجات</label>
     <div id="productsAr">
       <div class="product-row">
-        <input type="number" name="product_quantity[]" placeholder="الكمية" required>
         <input type="text" name="product_name[]" placeholder="اسم المنتج" required>
-        <button type="button" class="remove" style="display:none;">🗑️</button>
+        <input type="number" name="product_quantity[]" placeholder="الكمية" required>
+        <button type="button" class="remove">🗑️</button>
       </div>
     </div>
     <button type="button" id="addProductAr">إضافة منتج آخر</button>
@@ -114,66 +65,90 @@
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
     emailjs.init("S8j3LoOQfZofPv41a");
-    function sendHeight() { /* This function is the same, no changes needed */
-      setTimeout(() => {
-        const height = document.body.scrollHeight;
-        window.parent.postMessage({ frameHeight: height }, '*');
-      }, 100);
+    
+    function sendHeight() {
+      const height = document.body.scrollHeight + 10;
+      window.parent.postMessage({ frameHeight: height }, '*');
     }
-    document.addEventListener("DOMContentLoaded", function() {
-      sendHeight();
-      document.getElementById("addProductAr").addEventListener("click", function() {
-        const container = document.getElementById("productsAr");
-        const row = document.createElement("div");
-        row.className = "product-row";
-        // ✅ FIX: Swapped order of inputs for correct RTL display
-        row.innerHTML = `<input type="number" name="product_quantity[]" placeholder="الكمية" required><input type="text" name="product_name[]" placeholder="اسم المنتج" required><button type="button" class="remove">🗑️</button>`;
-        container.appendChild(row);
-        row.querySelector(".remove").addEventListener("click", function() {
-          row.remove();
-          sendHeight();
-        });
-        sendHeight();
-      });
-      document.getElementById("rfqFormAr").addEventListener("submit", function(e) {
-        e.preventDefault();
-        const form = this;
-        const msg = document.getElementById("message");
-        const submitButton = form.querySelector("button[type='submit']");
-        submitButton.disabled = true;
-        submitButton.innerText = "جارٍ الإرسال...";
-        form.phone.value = document.getElementById("countryCodeAr").value + form.phone.value;
-        const productNames = document.getElementsByName("product_name[]");
-        const productQtys = document.getElementsByName("product_quantity[]");
-        let table = "<table border='1' style='border-collapse:collapse;width:100%;text-align:center;'>";
-        table += "<tr><th>المنتج</th><th>الكمية</th></tr>";
-        for (let i = 0; i < productNames.length; i++) {
-          table += `<tr><td>${productNames[i].value}</td><td>${productQtys[i].value}</td></tr>`;
+
+    function updateDeleteButtons() {
+      const allRows = document.querySelectorAll('.product-row');
+      allRows.forEach(row => {
+        const removeBtn = row.querySelector('.remove');
+        if (removeBtn) {
+          removeBtn.style.display = allRows.length > 1 ? 'block' : 'none';
         }
-        table += "</table>";
-        document.getElementById("products_tableAr").value = table;
-        emailjs.sendForm("service_j69z5hb", "template_oogionp", form)
-          .then(function() {
-            let countdown = 5;
-            msg.className = "success";
-            msg.innerHTML = `✅ تم إرسال طلبك! سيتم التحويل خلال ${countdown} ثواني...`;
-            sendHeight();
-            const interval = setInterval(() => {
-              countdown--;
-              msg.innerHTML = `✅ تم إرسال طلبك! سيتم التحويل خلال ${countdown} ثواني...`;
-              if (countdown === 0) {
-                clearInterval(interval);
-                window.top.location.href = "https://alalamia-electric.wuiltstore.com/ar";
-              }
-            }, 1000);
-          }, function() {
-            msg.className = "error";
-            msg.innerHTML = "❌ فشل الإرسال! يرجى المحاولة مرة أخرى أو التواصل معنا.";
-            sendHeight();
-            submitButton.disabled = false;
-            submitButton.innerText = "إرسال الطلب";
-          });
       });
+    }
+
+    const formElement = document.getElementById('rfqFormAr');
+    const resizeObserver = new ResizeObserver(() => {
+      sendHeight();
+    });
+    resizeObserver.observe(formElement);
+    
+    window.addEventListener('DOMContentLoaded', function() {
+      sendHeight();
+      updateDeleteButtons();
+    });
+    window.addEventListener('load', sendHeight);
+
+    document.getElementById("addProductAr").addEventListener("click", function() {
+      const container = document.getElementById("productsAr");
+      const row = document.createElement("div");
+      row.className = "product-row";
+      row.innerHTML = `<input type="text" name="product_name[]" placeholder="اسم المنتج" required><input type="number" name="product_quantity[]" placeholder="الكمية" required><button type="button" class="remove">🗑️</button>`;
+      container.appendChild(row);
+      
+      row.querySelector(".remove").addEventListener("click", function() {
+        row.remove();
+        updateDeleteButtons();
+      });
+
+      updateDeleteButtons();
+    });
+
+    document.querySelector('.product-row .remove').addEventListener('click', function(e) {
+        e.target.closest('.product-row').remove();
+        updateDeleteButtons();
+    });
+
+    document.getElementById("rfqFormAr").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const form = this;
+      const msg = document.getElementById("message");
+      const submitButton = form.querySelector("button[type='submit']");
+      submitButton.disabled = true;
+      submitButton.innerText = "جارٍ الإرسال...";
+      form.phone.value = document.getElementById("countryCodeAr").value + form.phone.value;
+      const productNames = document.getElementsByName("product_name[]");
+      const productQtys = document.getElementsByName("product_quantity[]");
+      let table = "<table border='1' style='border-collapse:collapse;width:100%;text-align:center;'>";
+      table += "<tr><th>المنتج</th><th>الكمية</th></tr>";
+      for (let i = 0; i < productNames.length; i++) {
+        table += `<tr><td>${productNames[i].value}</td><td>${productQtys[i].value}</td></tr>`;
+      }
+      table += "</table>";
+      document.getElementById("products_tableAr").value = table;
+      emailjs.sendForm("service_j69z5hb", "template_oogionp", form)
+        .then(function() {
+          let countdown = 5;
+          msg.className = "success";
+          msg.innerHTML = `✅ تم إرسال طلبك! سيتم التحويل خلال ${countdown} ثواني...`;
+          const interval = setInterval(() => {
+            countdown--;
+            msg.innerHTML = `✅ تم إرسال طلبك! سيتم التحويل خلال ${countdown} ثواني...`;
+            if (countdown === 0) {
+              clearInterval(interval);
+              window.top.location.href = "https://alalamia-electric.wuiltstore.com/ar";
+            }
+          }, 1000);
+        }, function() {
+          msg.className = "error";
+          msg.innerHTML = "❌ فشل الإرسال! يرجى المحاولة مرة أخرى أو التواصل معنا.";
+          submitButton.disabled = false;
+          submitButton.innerText = "إرسال الطلب";
+        });
     });
   </script>
 </body>
