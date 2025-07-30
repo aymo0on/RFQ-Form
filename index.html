@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Request a Quotation</title>
   <style>
+    /* CSS does not need changes */
     * { box-sizing: border-box; }
     body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f4f7f6; margin: 0; }
     form { background: #fff; padding: 30px; border-radius: 12px; width: 90%; max-width: 600px; margin: 40px auto; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
@@ -53,7 +54,7 @@
       <div class="product-row">
         <input type="text" name="product_name[]" placeholder="Product Name" required>
         <input type="number" name="product_quantity[]" placeholder="Quantity" required>
-        <button type="button" class="remove" style="display:none;">🗑️</button>
+        <button type="button" class="remove">🗑️</button>
       </div>
     </div>
     <button type="button" id="addProduct">Add Another Product</button>
@@ -68,37 +69,55 @@
   <script>
     emailjs.init("S8j3LoOQfZofPv41a");
     
-    // ✅ NEW: More robust height sending function
     function sendHeight() {
-      // Add a small buffer from the source
       const height = document.body.scrollHeight + 10;
       window.parent.postMessage({ frameHeight: height }, '*');
     }
+    
+    // ✅ NEW: Function to show/hide delete buttons based on row count
+    function updateDeleteButtons() {
+      const allRows = document.querySelectorAll('.product-row');
+      allRows.forEach(row => {
+        const removeBtn = row.querySelector('.remove');
+        if (removeBtn) {
+          removeBtn.style.display = allRows.length > 1 ? 'block' : 'none';
+        }
+      });
+    }
 
-    // ✅ NEW: Use ResizeObserver for the most reliable height updates
     const formElement = document.getElementById('rfqForm');
     const resizeObserver = new ResizeObserver(() => {
       sendHeight();
     });
     resizeObserver.observe(formElement);
     
-    // Also send height on initial load events
-    window.addEventListener('DOMContentLoaded', sendHeight);
+    window.addEventListener('DOMContentLoaded', function() {
+      sendHeight();
+      updateDeleteButtons(); // ✅ Call on load
+    });
     window.addEventListener('load', sendHeight);
 
-    // Add/remove product logic remains the same (ResizeObserver will handle the height change)
     document.getElementById("addProduct").addEventListener("click", function() {
       const container = document.getElementById("products");
       const row = document.createElement("div");
       row.className = "product-row";
       row.innerHTML = `<input type="text" name="product_name[]" placeholder="Product Name" required><input type="number" name="product_quantity[]" placeholder="Quantity" required><button type="button" class="remove">🗑️</button>`;
       container.appendChild(row);
+      
       row.querySelector(".remove").addEventListener("click", function() {
         row.remove();
+        updateDeleteButtons(); // ✅ Call after removing a row
       });
+
+      updateDeleteButtons(); // ✅ Call after adding a new row
     });
 
-    // Form submission logic remains the same (ResizeObserver will handle the height change when messages appear)
+    // Also add the remove event listener to the *first* row
+    document.querySelector('.product-row .remove').addEventListener('click', function(e) {
+        e.target.closest('.product-row').remove();
+        updateDeleteButtons(); // ✅ Call after removing the first row
+    });
+
     document.getElementById("rfqForm").addEventListener("submit", function(e) {
         e.preventDefault();
         const form = this;
