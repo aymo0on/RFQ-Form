@@ -98,8 +98,8 @@
     <label>المنتجات</label>
     <div id="productsAr">
       <div class="product-row">
-        <input type="text" name="product_name[]" placeholder="اسم المنتج" required>
         <input type="number" name="product_quantity[]" placeholder="الكمية" required>
+        <input type="text" name="product_name[]" placeholder="اسم المنتج" required>
         <button type="button" class="remove" style="display:none;">🗑️</button>
       </div>
     </div>
@@ -126,7 +126,8 @@
         const container = document.getElementById("productsAr");
         const row = document.createElement("div");
         row.className = "product-row";
-        row.innerHTML = `<input type="text" name="product_name[]" placeholder="اسم المنتج" required><input type="number" name="product_quantity[]" placeholder="الكمية" required><button type="button" class="remove">🗑️</button>`;
+        // ✅ FIX: Swapped order of inputs for correct RTL display
+        row.innerHTML = `<input type="number" name="product_quantity[]" placeholder="الكمية" required><input type="text" name="product_name[]" placeholder="اسم المنتج" required><button type="button" class="remove">🗑️</button>`;
         container.appendChild(row);
         row.querySelector(".remove").addEventListener("click", function() {
           row.remove();
