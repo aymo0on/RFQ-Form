@@ -188,10 +188,13 @@
 
         emailjs.sendForm("service_j69z5hb", "template_l6yk3pi", form)
           .then(function() {
+            // ✅ BUG FIX: The 'let countdown' declaration was moved here, before it is used.
+            let countdown = 5; 
+            
             msg.className = "success";
             msg.innerHTML = `✅ Your request has been sent! Redirecting in ${countdown}s...`;
-            sendHeight(); // ✅ FIX 1: Resize the iframe to show the success message
-            let countdown = 5;
+            sendHeight(); 
+            
             const interval = setInterval(() => {
               countdown--;
               msg.innerHTML = `✅ Your request has been sent! Redirecting in ${countdown}s...`;
@@ -203,7 +206,7 @@
           }, function() {
             msg.className = "error";
             msg.innerHTML = "❌ Submission failed! Please try again or contact: omaralalamiaa@gmail.com";
-            sendHeight(); // ✅ FIX 2: Resize the iframe to show the error message
+            sendHeight();
             submitButton.disabled = false;
             submitButton.innerText = "Submit Request";
           });
