@@ -5,81 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Request a Quotation</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-    body {
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-      background-color: #f4f7f6;
-      margin: 0;
-    }
-    form {
-      background: #fff;
-      padding: 30px;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 600px;
-      margin: 40px auto;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    }
+    * { box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f4f7f6; margin: 0; }
+    form { background: #fff; padding: 30px; border-radius: 12px; width: 90%; max-width: 600px; margin: 40px auto; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
     h2 { text-align: center; margin-bottom: 25px; color: #333; }
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-      color: #555;
-      font-size: 14px;
-    }
-    input, button, select, textarea {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 15px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: #2772b7;
-      box-shadow: 0 0 5px rgba(39, 114, 183, 0.5);
-    }
+    label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; font-size: 14px; }
+    input, button, select, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 6px; border: 1px solid #ccc; font-size: 16px; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: #2772b7; box-shadow: 0 0 5px rgba(39, 114, 183, 0.5); }
     .phone-row { display: flex; gap: 10px; }
     .phone-row select { width: 120px; }
     .product-row { display: flex; align-items: center; gap: 10px; }
-    .product-row input[type="text"] {
-      flex: 3;
-      margin-bottom: 10px;
-    }
-    .product-row input[type="number"] {
-      flex: 1;
-      margin-bottom: 10px;
-      min-width: 90px;
-    }
-    button[type="submit"], #addProduct {
-      background: #2772b7;
-      color: white;
-      border: none;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    button[type="submit"]:hover, #addProduct:hover {
-      background-color: #1e5a90;
-    }
-    button[type="submit"]:disabled {
-      background-color: #a0a0a0;
-      cursor: wait;
-    }
-    .product-row button.remove {
-      width: 40px;
-      height: 40px;
-      padding: 0;
-      background: #e0e0e0;
-      color: #333;
-      border: 1px solid #ccc;
-      margin-bottom: 10px;
-      line-height: 40px;
-      flex-shrink: 0;
-    }
+    .product-row input[type="text"] { flex: 3; margin-bottom: 10px; }
+    .product-row input[type="number"] { flex: 1; margin-bottom: 10px; min-width: 90px; }
+    button[type="submit"], #addProduct { background: #2772b7; color: white; border: none; cursor: pointer; transition: background-color 0.3s ease; }
+    button[type="submit"]:hover, #addProduct:hover { background-color: #1e5a90; }
+    button[type="submit"]:disabled { background-color: #a0a0a0; cursor: wait; }
+    .product-row button.remove { width: 40px; height: 40px; padding: 0; background: #e0e0e0; color: #333; border: 1px solid #ccc; margin-bottom: 10px; line-height: 40px; flex-shrink: 0; }
     #message { margin-top: 15px; text-align: center; font-weight: bold; font-size: 16px; }
     #message.success { color: green; }
     #message.error { color: red; }
@@ -126,27 +67,39 @@
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
     emailjs.init("S8j3LoOQfZofPv41a");
+    
+    // ✅ NEW: More robust height sending function
     function sendHeight() {
-      setTimeout(() => {
-        const height = document.body.scrollHeight;
-        window.parent.postMessage({ frameHeight: height }, '*');
-      }, 100);
+      // Add a small buffer from the source
+      const height = document.body.scrollHeight + 10;
+      window.parent.postMessage({ frameHeight: height }, '*');
     }
-    document.addEventListener("DOMContentLoaded", function() {
+
+    // ✅ NEW: Use ResizeObserver for the most reliable height updates
+    const formElement = document.getElementById('rfqForm');
+    const resizeObserver = new ResizeObserver(() => {
       sendHeight();
-      document.getElementById("addProduct").addEventListener("click", function() {
-        const container = document.getElementById("products");
-        const row = document.createElement("div");
-        row.className = "product-row";
-        row.innerHTML = `<input type="text" name="product_name[]" placeholder="Product Name" required><input type="number" name="product_quantity[]" placeholder="Quantity" required><button type="button" class="remove">🗑️</button>`;
-        container.appendChild(row);
-        row.querySelector(".remove").addEventListener("click", function() {
-          row.remove();
-          sendHeight();
-        });
-        sendHeight();
+    });
+    resizeObserver.observe(formElement);
+    
+    // Also send height on initial load events
+    window.addEventListener('DOMContentLoaded', sendHeight);
+    window.addEventListener('load', sendHeight);
+
+    // Add/remove product logic remains the same (ResizeObserver will handle the height change)
+    document.getElementById("addProduct").addEventListener("click", function() {
+      const container = document.getElementById("products");
+      const row = document.createElement("div");
+      row.className = "product-row";
+      row.innerHTML = `<input type="text" name="product_name[]" placeholder="Product Name" required><input type="number" name="product_quantity[]" placeholder="Quantity" required><button type="button" class="remove">🗑️</button>`;
+      container.appendChild(row);
+      row.querySelector(".remove").addEventListener("click", function() {
+        row.remove();
       });
-      document.getElementById("rfqForm").addEventListener("submit", function(e) {
+    });
+
+    // Form submission logic remains the same (ResizeObserver will handle the height change when messages appear)
+    document.getElementById("rfqForm").addEventListener("submit", function(e) {
         e.preventDefault();
         const form = this;
         const msg = document.getElementById("message");
@@ -163,4 +116,26 @@
         }
         table += "</table>";
         document.getElementById("products_table").value = table;
-        emailjs.send
+        emailjs.sendForm("service_j69z5hb", "template_l6yk3pi", form)
+          .then(function() {
+            let countdown = 5;
+            msg.className = "success";
+            msg.innerHTML = `✅ Your request has been sent! Redirecting in ${countdown}s...`;
+            const interval = setInterval(() => {
+              countdown--;
+              msg.innerHTML = `✅ Your request has been sent! Redirecting in ${countdown}s...`;
+              if (countdown === 0) {
+                clearInterval(interval);
+                window.top.location.href = "https://alalamia-electric.wuiltstore.com/en";
+              }
+            }, 1000);
+          }, function() {
+            msg.className = "error";
+            msg.innerHTML = "❌ Submission failed! Please try again or contact us.";
+            submitButton.disabled = false;
+            submitButton.innerText = "Submit Request";
+          });
+      });
+  </script>
+</body>
+</html>
