@@ -74,7 +74,6 @@
       window.parent.postMessage({ frameHeight: height }, '*');
     }
     
-    // ✅ NEW: Function to show/hide delete buttons based on row count
     function updateDeleteButtons() {
       const allRows = document.querySelectorAll('.product-row');
       allRows.forEach(row => {
@@ -93,7 +92,7 @@
     
     window.addEventListener('DOMContentLoaded', function() {
       sendHeight();
-      updateDeleteButtons(); // ✅ Call on load
+      updateDeleteButtons();
     });
     window.addEventListener('load', sendHeight);
 
@@ -106,16 +105,15 @@
       
       row.querySelector(".remove").addEventListener("click", function() {
         row.remove();
-        updateDeleteButtons(); // ✅ Call after removing a row
+        updateDeleteButtons();
       });
 
-      updateDeleteButtons(); // ✅ Call after adding a new row
+      updateDeleteButtons();
     });
 
-    // Also add the remove event listener to the *first* row
     document.querySelector('.product-row .remove').addEventListener('click', function(e) {
         e.target.closest('.product-row').remove();
-        updateDeleteButtons(); // ✅ Call after removing the first row
+        updateDeleteButtons();
     });
 
     document.getElementById("rfqForm").addEventListener("submit", function(e) {
@@ -145,7 +143,8 @@
               msg.innerHTML = `✅ Your request has been sent! Redirecting in ${countdown}s...`;
               if (countdown === 0) {
                 clearInterval(interval);
-                window.top.location.href = "https://alalamia-electric.wuiltstore.com/en";
+                // MODIFIED: Updated to new domain
+                window.top.location.href = "https://alalamia-electric.com/en";
               }
             }, 1000);
           }, function() {

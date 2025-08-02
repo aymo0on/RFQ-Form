@@ -140,7 +140,8 @@
             msg.innerHTML = `✅ تم إرسال طلبك! سيتم التحويل خلال ${countdown} ثواني...`;
             if (countdown === 0) {
               clearInterval(interval);
-              window.top.location.href = "https://alalamia-electric.wuiltstore.com/ar";
+              // MODIFIED: Updated to new domain
+              window.top.location.href = "https://alalamia-electric.com/ar";
             }
           }, 1000);
         }, function() {
